@@ -13,6 +13,15 @@ Move the guarantee from "every developer, every query, forever" to **one place t
 database enforces**: if the tenant is not established, nothing is visible; if it is,
 only that tenant's rows are visible *and writable*.
 
+## Real-world precedent
+
+In a production Supabase SaaS I wrote the migration that enabled RLS on every `public`
+table with **no policies**: the browser's public key (`anon`/`authenticated`) became fully
+blocked, and only the backend, using `service_role`, could read or write. That closed direct
+access through the public API, but authorization still lived in application code, because
+`service_role` bypasses RLS. This demo is the next step: the database enforces tenant
+isolation even for the application's own role.
+
 ## What changes
 
 | # | Change | Why |
