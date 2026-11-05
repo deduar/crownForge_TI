@@ -1,0 +1,44 @@
+{
+  "name": "tenant-isolation-rls",
+  "version": "1.0.0",
+  "description": "Multi-tenant isolation enforced by PostgreSQL Row Level Security",
+  "scripts": {
+    "db:up": "docker compose up -d --wait db",
+    "db:down": "docker compose down -v",
+    "migrate": "tsx src/cli/migrate.ts",
+    "seed": "tsx src/cli/seed.ts",
+    "token": "tsx src/cli/token.ts",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deduar/crownForge_TI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/deduar/crownForge_TI/issues"
+  },
+  "homepage": "https://github.com/deduar/crownForge_TI#readme",
+  "dependencies": {
+    "fastify": "^5.12.8",
+    "jose": "^6.2.15",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.5",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  }
+}
