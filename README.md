@@ -1,5 +1,7 @@
 # Tenant isolation with PostgreSQL Row Level Security
 
+[![CI](https://github.com/deduar/crownForge_TI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/deduar/crownForge_TI/actions/workflows/ci.yml)
+
 Two companies share one database. A user of company A cannot see, modify, or even
 detect anything from company B. **The database enforces it**, not the application code.
 
