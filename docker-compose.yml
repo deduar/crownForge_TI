@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres # superuser: bootstrap only, never used by the app
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tenancy
+    ports: ["54329:5432"]
+    volumes:
+      - ./db/bootstrap:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tenancy"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  # One-shot job: migrations (+ demo seed) run as app_owner before the API starts,
+  # the same shape as a pre-deploy job in a real pipeline.
+  migrate:
+    build: .
+    command: ["sh", "-c", "node dist/cli/migrate.js && node dist/cli/seed.js"]
+    environment:
+      MIGRATION_DATABASE_URL: postgres://app_owner:owner_dev_pw@db:5432/tenancy
+    depends_on:
+      db: { condition: service_healthy }
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgres://app_user:app_dev_pw@db:5432/tenancy # runtime role: DML only, RLS enforced
+      JWT_SECRET: dev-only-secret-change-me-dev-only-secret
+    ports: ["3000:3000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
